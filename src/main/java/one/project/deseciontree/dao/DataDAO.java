@@ -71,7 +71,7 @@ public class DataDAO {
    */
   private static DataSet convert(Instances data) {
     DataSet dataSet = new DataSet();
-    data.parallelStream().forEach(new InstanceConsumer(dataSet));//iterate over the data and convert it
+    data.stream().forEach(new InstanceConsumer(dataSet));//iterate over the data and convert it
     return dataSet;
   }
 }
