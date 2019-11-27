@@ -6,7 +6,6 @@
 package one.project.deseciontree.dao;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.function.Consumer;
@@ -22,37 +21,57 @@ import weka.core.converters.ArffLoader.ArffReader;
  */
 public class DataDAO {
 
-    public static DataSet readFile(String filePath) throws FileNotFoundException, IOException {
-        BufferedReader reader = new BufferedReader(new FileReader(filePath));
-        ArffReader arff = new ArffReader(reader);
-        Instances data = arff.getData();
-        data.setClassIndex(data.numAttributes() - 1);
-        DataSet dataSet = new DataSet();
-        data.parallelStream().forEach(new InstanceConsumer(dataSet));
-        return dataSet;
+  /**
+   * Reads a file and converts it into a dataset
+   *
+   * @param filePath the path of the file to read
+   * @return a dataset
+   * @throws IOException
+   */
+  public static DataSet readFile(String filePath) throws IOException {
+    BufferedReader reader = new BufferedReader(new FileReader(filePath));
+    ArffReader arffFile = new ArffReader(reader);//read the arff file
+    Instances data = arffFile.getData();//extract the datset
+    data.setClassIndex(data.numAttributes() - 1);//set the class to be the last attribute
+    return convert(data);
+  }
+
+  /**
+   * A Consumer class that converts feature Instances to a dataset
+   */
+  private static class InstanceConsumer implements Consumer<Instance> {
+
+    private final DataSet dataSet;
+
+    public InstanceConsumer(DataSet dataSet) {
+      this.dataSet = dataSet;
     }
 
-    private static class InstanceConsumer implements Consumer<Instance> {
-
-        private final DataSet dataSet;
-
-        public InstanceConsumer(DataSet dataSet) {
-            this.dataSet = dataSet;
+    @Override
+    public void accept(Instance featureInstance) {
+      ClassifiedFeature classifiedFeature = new ClassifiedFeature();
+      double[] featureINstanceAttributes = featureInstance.toDoubleArray();
+      for (int i = 0; i < featureINstanceAttributes.length; i++) {
+        if (i != featureInstance.classIndex()) {
+          classifiedFeature.getFeatureVector().add(String.valueOf(featureINstanceAttributes[i]));
+        } else {
+          classifiedFeature.setClassifedClass(String.valueOf(featureINstanceAttributes[i]));
         }
-
-        @Override
-        public void accept(Instance arg0) {
-            ClassifiedFeature feature = new ClassifiedFeature();
-            double[] attributes = arg0.toDoubleArray();
-            for (int i = 0; i < attributes.length; i++) {
-                if (i != arg0.classIndex()) {
-                    feature.getFeatureVector().add(String.valueOf(attributes[i]));
-                } else {                   
-                    feature.setClassifedClass(String.valueOf(attributes[i]));
-                }
-            }
-            this.dataSet.getData().add(feature);
-        }
-
+      }
+      this.dataSet.getData().add(classifiedFeature);
     }
+
+  }
+
+  /**
+   * Converts a Weka dataset into a dataset for our use
+   *
+   * @param data the data to convert
+   * @return a dataset with the converted data
+   */
+  private static DataSet convert(Instances data) {
+    DataSet dataSet = new DataSet();
+    data.parallelStream().forEach(new InstanceConsumer(dataSet));//iterate over the data and convert it
+    return dataSet;
+  }
 }

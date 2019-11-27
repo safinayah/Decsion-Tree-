@@ -13,25 +13,30 @@ import java.util.List;
  * @author ayah
  */
 public class DataSet {
-    
-    private List<ClassifiedFeature> data = new ArrayList<>();
 
-    public List<ClassifiedFeature> getData() {
-        return data;
-    }
+  private List<ClassifiedFeature> data = new ArrayList<>();
 
-    public void setData(List<ClassifiedFeature> data) {
-        this.data = data;
+  public List<ClassifiedFeature> getData() {
+    return data;
+  }
+
+  public void setData(List<ClassifiedFeature> data) {
+    this.data = data;
+  }
+
+  /**
+   * Iterates over the dataset and calculates the frequency tabke
+   *
+   * @return a frequency table
+   */
+  public FrequencyTable calculateFrequencyTable() {
+    FrequencyTable frequenceyTable = new FrequencyTable();
+    for (ClassifiedFeature classifiedFeature : data) {
+      for (int i = 0; i < classifiedFeature.getFeatureVector().size(); i++) {
+        frequenceyTable.addToCount(String.valueOf(i), classifiedFeature.getFeatureVector().get(i));
+      }
     }
-    
-    public FrequencyTable calculateFrequencyTable(){
-       FrequencyTable ft = new FrequencyTable();
-       for(ClassifiedFeature cf : data){
-           for(int i=0; i<cf.getFeatureVector().size();i++){
-               ft.addToCount(String.valueOf(i), cf.getFeatureVector().get(i));
-           }
-       }
-       return ft;
-    }
-    
+    return frequenceyTable;
+  }
+
 }
