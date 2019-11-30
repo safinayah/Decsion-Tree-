@@ -5,8 +5,13 @@
  */
 package one.project.deseciontree.model;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import one.project.deseciontree.dao.DataDAO;
 
 /**
  *
@@ -14,51 +19,32 @@ import java.util.Map;
  */
 public class FrequencyTable {
 
-//map contains the frequency table Integer is the code of the attribute
-  //set number of occurancies in the target class
-  Map<String, Map<String, Integer>> frequencyTable = new HashMap<>();
+//1 = p 
+    public FrequencyTable(DataSet dataset, double[] featureAttributes, int index) throws IOException {
+        List<Double> feature = new ArrayList<>();
+        int[][] fTable = new int[featureAttributes.length][3];
+        for (int i = 0; i < dataset.getData().size(); i++) {
+//            System.out.println("size : " + dataset.getData().size());
+            for (int j = 0; j < featureAttributes.length; j++) {
+//                System.out.println("length : " + featureAttributes.length);
+                System.out.println("ffff " + dataset.getData().get(i).getFeatureVector().get(index));
+        
 
-  /**
-   * Adds to the count of a feature instance's value in the frequency table
-   *
-   * @param featureToSet index of the feature
-   * @param featureValue value of the feature
-   */
-  public void addToCount(String featureToSet, String featureValue) {
-    if (frequencyTable.get(featureToSet) == null) {
-      frequencyTable.put(featureToSet, new HashMap<>());
+                if ((dataset.getData().get(i).getFeatureVector().get(index)).equals("" + featureAttributes[j])) {//2 equals to total 
+                    fTable[j][2]++;//inc total in ftable 
+
+                    if (dataset.getData().get(i).getClassifedClass().equals("" + 1.0)) {//1 equlas to p 
+
+                        fTable[j][1]++; // inc p's total 
+
+                    } else {// 0 equals to e
+                        fTable[j][0]++; // inc e's total   System.out.println("length : " + featureAttributes.length)
+                        System.out.println("3_________________________");
+
+                    }
+                }
+            }
+        }
+        System.out.println(Arrays.deepToString(fTable));
     }
-    Integer i = frequencyTable.get(featureToSet).get(featureValue);
-    if (i == null) {
-      i = 0;
-    }
-    i = i + 1;
-    frequencyTable.get(featureToSet).put(featureValue, i);
-  }
-
-  /**
-   * Gets the total counts of all values of a feature
-   *
-   * @param featureToGet the index/name of the feature to get
-   * @return the count of all instances of a feature
-   */
-  public int getTotalCount(String featureToGet) {
-    int i = 0;
-    for (Integer value : frequencyTable.get(featureToGet).values()) {
-      i = i + value;
-    }
-    return i;
-  }
-
-  /**
-   * Gets the count for a specific value for a feature attribute
-   *
-   * @param featureToGet the index/name of the feature attribute
-   * @param featureValue the value to get
-   * @return the number of times this value was repeated in the dataset
-   */
-  public int getCountOfValue(String featureToGet, String featureValue) {
-    return frequencyTable.get(featureToGet).get(featureValue);
-  }
-
 }
