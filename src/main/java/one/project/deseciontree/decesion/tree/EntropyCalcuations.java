@@ -5,6 +5,7 @@
  */
 package one.project.deseciontree.decesion.tree;
 
+import java.util.Arrays;
 import one.project.deseciontree.model.FrequencyTable;
 
 /**
@@ -13,76 +14,55 @@ import one.project.deseciontree.model.FrequencyTable;
  */
 public class EntropyCalcuations {
 
-    /**
-     *
-     *
-     * @param fTable
-     * @param totalData
-     * @return
-     */
-    public double calculateAttributeEntopy(FrequencyTable fTable, int totalData) {
+    double yesTemp = 0;
+    double noTemp = 0;
+    double totalTemp = 0;
+    double p = 0.0;
+    double aEntropy;
+    double yesVal = 0.0;
+    double noVal = 0.0;
+    double fEntropy = 0;
 
-        double entropy = 0.0;
-        int featureAtrributeOne = 0;
-        int fratureAttributeTwo = 0;
+    double calculateEntropy(FrequencyTable fTable, int total) {
 
         int[][] freqTable = fTable.getfTable();
-        for (int i = 0; i < freqTable.length; i++) {
-//          
-            if (freqTable[i][0] == 0 || freqTable[i][1] == 0) {
 
-                entropy = 0;
+//        System.out.println( "             " + Arrays.deepToString(fTable.getfTable()));
+        for (int i = 0; i < fTable.getfTable().length; i++) {
 
-            } else if (freqTable[i][0] == freqTable[i][1]) {
+            yesTemp = freqTable[i][0];
+//            System.out.println("1 :       "+yesTemp);
+            noTemp = freqTable[i][1];
+//            System.out.println("2 :       "+noTemp);
 
-                entropy = 1;
-
+            totalTemp = freqTable[i][2];
+//            System.out.println("3 :       "+totalTemp+"\n\n\n\n");
+            if (yesTemp == 0 || noTemp == 0 || totalTemp == 0) {
+                fEntropy = 0;
             } else {
+                p = calculateP(totalTemp, total);
+//                System.out.println("totalTemp : " + totalTemp + "  total :  " + total);
+                yesVal = yesTemp / totalTemp;
+                noVal = noTemp / totalTemp;
 
-                int poisonTotal = 0;
-                int edable = 0;
+                aEntropy = -((yesVal * Math.log(yesVal)) / Math.log(2)) - ((noVal * Math.log(noVal)) / Math.log(2));
+//                System.out.println("\naEnt :  " + aEntropy);
 
-                poisonTotal += freqTable[i][1];
-                edable += freqTable[i][0];
+                fEntropy = p * aEntropy;
+                fEntropy = fEntropy + fEntropy;
 
-                featureAtrributeOne = freqTable[i][0];
-                fratureAttributeTwo = freqTable[i][1];
-
-                entropy = calculateP(freqTable[i][2], totalData) * (calculateFeatureEntropy(featureAtrributeOne, freqTable[i][2]) + calculateFeatureEntropy(fratureAttributeTwo, freqTable[i][2]));
-                
+//                System.out.println("\nfEnt :  " + fEntropy);
+                return fEntropy;
             }
-
-            entropy += entropy;
         }
 
-        return entropy;
-    }
-
-    /**
-     *
-     * @param featureTotal
-     * @param total
-     * @return
-     */
-    private double calculateP(int featureTotal, int total) {//checked   
-        double p = (double) featureTotal / (double) total;
-        return (double) featureTotal / (double) total;
+        return fEntropy;
 
     }
 
-    /**
-     *
-     *
-     * @param attributeTotal
-     * @param total
-     * @return current entropy divided by two
-     */
-    private double calculateFeatureEntropy(int attributeTotal, int total) {
-        double mul = ((double) attributeTotal / total);
+    private double calculateP(double featureTotal, int total) {
 
-        double currentEntropy = Math.log(attributeTotal / (double) total) / Math.log(2);
-
-        return currentEntropy * mul * -1;
+        return featureTotal / total;
     }
 
 }
