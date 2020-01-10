@@ -5,6 +5,7 @@
  */
 package one.project.deseciontree.decesion.tree.calculations;
 
+import one.project.deseciontree.constants.FrequencyTableConstants;
 import one.project.deseciontree.model.FrequencyTable;
 
 /**
@@ -22,17 +23,23 @@ public class EntropyCalcuations {
     private double noVal = 0.0;
     private double fEntropy = 0;
     private double totalEntropy = 0;
-
+/**
+ * calculates the entropy(targetClass,Feature) 
+ * 
+ * @param fTable
+ * @param total
+ * @return features entropy
+ */
     public double calculateEntropy(FrequencyTable fTable, int total) {
 
         int[][] freqTable = fTable.getfTable();
 
         for (int i = 0; i < fTable.getfTable().length; i++) {
 
-            yesTemp = freqTable[i][0];
-            noTemp = freqTable[i][1];
+            yesTemp = freqTable[i][FrequencyTableConstants.EDABLE_iNDEX];
+            noTemp = freqTable[i][FrequencyTableConstants.POISINAS_iNDEX];
 
-            totalTemp = freqTable[i][2];
+            totalTemp = freqTable[i][FrequencyTableConstants.TOTAL_INDEX];
 
             if (yesTemp == noTemp) {
                 p = calculateP(totalTemp, total);
@@ -45,8 +52,7 @@ public class EntropyCalcuations {
                 yesVal = yesTemp / totalTemp;
                 noVal = noTemp / totalTemp;
 
-                aEntropy = featureEntropy(yesVal, noVal);
-//                System.out.println(i+"  Entroooopyyyy   : :   "+aEntropy);
+                aEntropy = entropyEquation(yesVal, noVal);
                 fEntropy = p * aEntropy;
             }
 
@@ -57,12 +63,22 @@ public class EntropyCalcuations {
         return totalEntropy;
 
     }
-
-    public double featureEntropy(double yesVal, double noVal) {
+    /**
+     * decision tree entropy formula
+     * @param yesVal all values are classified as ediable  
+     * @param noVal  all values are classified as poisinas 
+     * @return 
+     */
+    public double entropyEquation(double yesVal, double noVal) {
 
         return -((yesVal * Math.log(yesVal)) / Math.log(2)) - ((noVal * Math.log(noVal)) / Math.log(2));
     }
-
+/**
+ * calculates the p value that is the division answer form all occurances of the given feature by the total 
+ * @param featureTotal
+ * @param total
+ * @return p 
+ */
     private double calculateP(double featureTotal, int total) {
 
         return featureTotal / total;
