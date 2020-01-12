@@ -1,9 +1,10 @@
 one/project/deseciontree/dao/DataDAO$InstanceConsumer.class
-one/project/deseciontree/decesion/tree/Calculations.class
 one/project/deseciontree/model/DataSet.class
+one/project/deseciontree/constants/FrequencyTableConstants.class
+one/project/deseciontree/decesion/tree/calculations/EntropyCalcuations.class
 one/project/deseciontree/model/Node.class
+one/project/deseciontree/decesion/tree/calculations/InformationGainCalculations.class
 one/project/deseciontree/decesion/tree/Main.class
-one/project/deseciontree/model/Tree.class
 one/project/deseciontree/model/ClassifiedFeature.class
 one/project/deseciontree/decesion/tree/DecisionTree.class
 one/project/deseciontree/model/FrequencyTable.class

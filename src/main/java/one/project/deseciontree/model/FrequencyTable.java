@@ -6,12 +6,8 @@
 package one.project.deseciontree.model;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import one.project.deseciontree.dao.DataDAO;
+import one.project.deseciontree.constants.FrequencyTableConstants;
+ 
 
 /**
  *
@@ -19,32 +15,48 @@ import one.project.deseciontree.dao.DataDAO;
  */
 public class FrequencyTable {
 
-//1 = p 
+    
+    
+    
+    private int[][] fTable;
+
+    /**
+     *
+     * @param dataset
+     * @param featureAttributes
+     * @param index
+     * @throws IOException
+     */
     public FrequencyTable(DataSet dataset, double[] featureAttributes, int index) throws IOException {
-        List<Double> feature = new ArrayList<>();
-        int[][] fTable = new int[featureAttributes.length][3];
+        fTable = new int[featureAttributes.length][FrequencyTableConstants.FREQ_TABLE_LENGTH];
+
         for (int i = 0; i < dataset.getData().size(); i++) {
-//            System.out.println("size : " + dataset.getData().size());
+
             for (int j = 0; j < featureAttributes.length; j++) {
-//                System.out.println("length : " + featureAttributes.length);
-                System.out.println("ffff " + dataset.getData().get(i).getFeatureVector().get(index));
-        
 
-                if ((dataset.getData().get(i).getFeatureVector().get(index)).equals("" + featureAttributes[j])) {//2 equals to total 
-                    fTable[j][2]++;//inc total in ftable 
+                if ((dataset.getData().get(i).getFeatureVector().get(index)).equals("" + featureAttributes[j])) {
+                    fTable[j][FrequencyTableConstants.TOTAL_INDEX]++;
 
-                    if (dataset.getData().get(i).getClassifedClass().equals("" + 1.0)) {//1 equlas to p 
+                    if (dataset.getData().get(i).getClassifedClass().equals("" + FrequencyTableConstants.POISINAS_VALUE)) {
 
-                        fTable[j][1]++; // inc p's total 
+                        fTable[j][FrequencyTableConstants.POISINAS_iNDEX]++;
 
-                    } else {// 0 equals to e
-                        fTable[j][0]++; // inc e's total   System.out.println("length : " + featureAttributes.length)
-                        System.out.println("3_________________________");
+                    } else {
+                        fTable[j][FrequencyTableConstants.EDABLE_iNDEX]++;
 
                     }
                 }
             }
+
         }
-        System.out.println(Arrays.deepToString(fTable));
     }
+
+    public int[][] getfTable() {
+        return fTable;
+    }
+
+    public void setfTable(int[][] fTable) {
+        this.fTable = fTable;
+    }
+
 }

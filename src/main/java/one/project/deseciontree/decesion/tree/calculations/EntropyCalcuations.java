@@ -14,6 +14,10 @@ import one.project.deseciontree.model.FrequencyTable;
  */
 public class EntropyCalcuations {
 
+    
+    
+    
+    
     private double yesTemp = 0;
     private double noTemp = 0;
     private double totalTemp = 0;
