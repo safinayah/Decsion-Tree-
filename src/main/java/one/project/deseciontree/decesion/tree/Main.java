@@ -60,7 +60,6 @@ public class Main {
                 double ans = eCal.calculateEntropy(ftable, size);
                 InformationGainCalculations IG = new InformationGainCalculations();
                 double featureGain = IG.caluclateFeatureGain(ans);
-                System.out.println("Feature Gain :  " + featueGainList);
                 featueGainList.add(featureGain);
                 cf.setInformationGain(featureGain);
 
@@ -68,7 +67,6 @@ public class Main {
 
         }
         Collections.reverse(featueGainList);
-        System.out.println("biggest value  :   " + featueGainList.get(0));
    
 
     }
