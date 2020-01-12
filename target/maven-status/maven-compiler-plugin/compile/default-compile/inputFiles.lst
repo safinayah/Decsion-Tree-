@@ -8,3 +8,4 @@
 /home/ayah/Machine learning/desecionTree/src/main/java/one/project/deseciontree/decesion/tree/calculations/InformationGainCalculations.java
 /home/ayah/Machine learning/desecionTree/src/main/java/one/project/deseciontree/model/Node.java
 /home/ayah/Machine learning/desecionTree/src/main/java/one/project/deseciontree/decesion/tree/DecisionTree.java
+/home/ayah/Machine learning/desecionTree/src/main/java/one/project/deseciontree/model/FeatureNode.java

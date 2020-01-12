@@ -15,7 +15,9 @@ import one.project.deseciontree.decesion.tree.calculations.EntropyCalcuations;
 import one.project.deseciontree.decesion.tree.calculations.InformationGainCalculations;
 import one.project.deseciontree.model.ClassifiedFeature;
 import one.project.deseciontree.model.DataSet;
+import one.project.deseciontree.model.FeatureNode;
 import one.project.deseciontree.model.FrequencyTable;
+import one.project.deseciontree.model.Node;
 
 /**
  *
@@ -24,8 +26,13 @@ import one.project.deseciontree.model.FrequencyTable;
 public class Main {
 
     public static void main(String[] args) throws IOException {
-
+        buildTree();
    
+
+    }
+
+    static DataSet fillData() throws IOException {
+
         String fileName = FrequencyTableConstants.FILE_NAME;
         DataSet dataSet = DataDAO.readFile(fileName);
 
@@ -34,16 +41,9 @@ public class Main {
         double[] featureAttributes;
         FrequencyTable ftable;
         ClassifiedFeature cf;
-        
-        
-            
-        
-        
         EntropyCalcuations eCal;
 
-        List<Double> featueGainList = new ArrayList<>();
-
-        for (int i = 0; i < size; i++) {//change size to numOfAttributes when use the original data
+        for (int i = 0; i < numOfAttributes - 1; i++) {//change size to numOfAttributes when use the original data
 
             int featureAttributeSize = DataDAO.read(fileName).attribute(i).numValues();
             featureAttributes = new double[featureAttributeSize];
@@ -53,26 +53,92 @@ public class Main {
 
             for (int j = 0; j < featureAttributeSize; j++) {
                 featureAttributes[j] = j;
+
             }
-            cf.setFeatureAttribute(featureAttributes);
+//            cf.setFeatureAttribute(featureAttributes);
+            dataSet.getData().get(i).setFeatureAttribute(featureAttributes);
+//            System.out.println(dataSet.getData().get(i).getFeatureAttribute());
 
-            if (cf.isTaken() == false) {
+            dataSet.getData().get(i).setName(DataDAO.read(fileName).attribute(i).name());
 
-                ftable = new FrequencyTable(dataSet, cf.getFeatureAttribute(), i);
+            ftable = new FrequencyTable(dataSet, featureAttributes, i);
 
-                eCal = new EntropyCalcuations();
+            eCal = new EntropyCalcuations();
 
-                double ans = eCal.calculateEntropy(ftable, size);
-                InformationGainCalculations IG = new InformationGainCalculations();
-                double featureGain = IG.caluclateFeatureGain(ans);
-                featueGainList.add(featureGain);
-                cf.setInformationGain(featureGain);
+            double ans = eCal.calculateEntropy(ftable, size);
+            InformationGainCalculations IG = new InformationGainCalculations();
+            double featureGain = IG.caluclateFeatureGain(ans);
+
+            dataSet.getData().get(i).setInformationGain(featureGain);
+
+        }
+
+        return dataSet;
+    }
+
+    static FeatureNode highestGain() throws IOException {
+
+        FeatureNode fn = new FeatureNode();
+
+        String fileName = FrequencyTableConstants.FILE_NAME;
+        int numOfAttributes = DataDAO.read(fileName).numAttributes();
+
+        String featureName = null;
+        List<Double> attributes = new ArrayList<>();
+
+        DataSet dataSet = fillData();
+
+        int size = dataSet.getData().size();
+
+        List<Double> featuerGainList = new ArrayList<>();
+
+        for (int i = 0; i < dataSet.getData().size(); i++) {
+            featuerGainList.add(dataSet.getData().get(i).getInformationGain());
+        }
+
+        Collections.reverse(featuerGainList);
+        double highestGain = featuerGainList.get(0);
+
+        for (int i = 0; i <numOfAttributes-1; i++) {
+            if (dataSet.getData().get(i).getInformationGain() == highestGain) {
+                dataSet.getData().get(i).getFeatureAttribute();
+                int featureAttributeSize = DataDAO.read(fileName).attribute(i).numValues();
+
+                for (int j = 0; j < featureAttributeSize; j++) {
+                    attributes.add(dataSet.getData().get(i).getFeatureAttribute()[j]);
+                    System.out.println(dataSet.getData().get(i).getFeatureAttribute()[j]);
+
+                }
+                featureName = dataSet.getData().get(i).getName();
+                dataSet.getData().get(i).setTaken(true);
 
             }
 
         }
-        Collections.reverse(featueGainList);
-   
+        fn.setAttributes(attributes);
+        fn.setName(featureName);
+//        System.out.println(featureName);
+
+        return fn;
 
     }
+
+    static void buildTree() throws IOException {
+
+        highestGain();
+
+        Node node = new Node(null);
+        String temp = null;
+        Node parentNode = new Node(null);
+        parentNode.setId(highestGain().getName());
+        for (int i = 0; i < highestGain().getAttributes().size(); i++) {
+            temp = "" + highestGain().getAttributes().get(i);
+
+            node = Node.addChild(parentNode, temp);
+
+        }
+
+        node.printTree(parentNode, " ");
+    }
+
 }
