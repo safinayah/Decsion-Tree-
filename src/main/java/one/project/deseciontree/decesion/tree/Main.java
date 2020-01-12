@@ -6,10 +6,16 @@
 package one.project.deseciontree.decesion.tree;
 
 import java.io.IOException;
-
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import one.project.deseciontree.constants.FrequencyTableConstants;
 import one.project.deseciontree.dao.DataDAO;
+import one.project.deseciontree.decesion.tree.calculations.EntropyCalcuations;
+import one.project.deseciontree.decesion.tree.calculations.InformationGainCalculations;
 import one.project.deseciontree.model.ClassifiedFeature;
 import one.project.deseciontree.model.DataSet;
+import one.project.deseciontree.model.FrequencyTable;
 
 /**
  *
@@ -19,32 +25,51 @@ public class Main {
 
     public static void main(String[] args) throws IOException {
 
-        /**
-         * Reads the dataset and prints out all feature vectors
-         */
-        DataSet dataSet = DataDAO.readFile("/home/ayah/test.arff");
+   
+        String fileName = FrequencyTableConstants.FILE_NAME;
+        DataSet dataSet = DataDAO.readFile(fileName);
 
         int size = dataSet.getData().size();
-        int[] featureAttribute;
-
+        int numOfAttributes = DataDAO.read(fileName).numAttributes();
+        double[] featureAttributes;
+        FrequencyTable ftable;
         ClassifiedFeature cf;
+        EntropyCalcuations eCal;
 
-        for (int i = 0; i < size; i++) {
+        List<Double> featueGainList = new ArrayList<>();
 
-            int featureAttributeSize = DataDAO.read("/home/ayah/test.arff").attribute(i).numValues();
-            featureAttribute = new int[featureAttributeSize];
+        for (int i = 0; i < size; i++) {//change size to numOfAttributes when use the original data
+
+            int featureAttributeSize = DataDAO.read(fileName).attribute(i).numValues();
+            featureAttributes = new double[featureAttributeSize];
             cf = new ClassifiedFeature();
             cf.setClassifedClass(dataSet.getData().get(i).getClassifedClass());
             cf.setFeatureVector(dataSet.getData().get(i).getFeatureVector());
-            cf.setName(DataDAO.read("/home/ayah/test.arff").attribute(i).name());
 
             for (int j = 0; j < featureAttributeSize; j++) {
-                featureAttribute[j] = j;
+                featureAttributes[j] = j;
             }
-            cf.setFeatureAttribute(featureAttribute);
+            cf.setFeatureAttribute(featureAttributes);
+
+            if (cf.isTaken() == false) {
+
+                ftable = new FrequencyTable(dataSet, cf.getFeatureAttribute(), i);
+
+                eCal = new EntropyCalcuations();
+
+                double ans = eCal.calculateEntropy(ftable, size);
+                InformationGainCalculations IG = new InformationGainCalculations();
+                double featureGain = IG.caluclateFeatureGain(ans);
+                System.out.println("Feature Gain :  " + featueGainList);
+                featueGainList.add(featureGain);
+                cf.setInformationGain(featureGain);
+
+            }
 
         }
+        Collections.reverse(featueGainList);
+        System.out.println("biggest value  :   " + featueGainList.get(0));
+   
 
     }
-
 }
