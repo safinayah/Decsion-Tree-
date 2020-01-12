@@ -34,6 +34,9 @@ public class Main {
         double[] featureAttributes;
         FrequencyTable ftable;
         ClassifiedFeature cf;
+        
+        
+        
         EntropyCalcuations eCal;
 
         List<Double> featueGainList = new ArrayList<>();
