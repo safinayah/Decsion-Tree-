@@ -22,6 +22,8 @@ public class Node {
         this.parent = parent;
     }
 
+
+
     public String getId() {
         return id;
     }
@@ -38,6 +40,12 @@ public class Node {
         return parent;
     }
 
+    /**
+     *
+     * @param parent
+     * @param id
+     * @return
+     */
     public static Node addChild(Node parent, String id) {
         Node node = new Node(parent);
         node.setId(id);
@@ -45,12 +53,18 @@ public class Node {
         return node;
     }
 
+    /**
+     *
+     * @param node
+     * @param appender
+     */
     public static void printTree(Node node, String appender) {
         System.out.println(appender + node.getId());
         node.getChildren().forEach((each) -> {
             printTree(each, appender + appender);
         });
     }
+    
+    
 
 }
- 
