@@ -26,8 +26,22 @@ import one.project.deseciontree.model.Node;
 public class Main {
 
     public static void main(String[] args) throws IOException {
-        buildTree();
-   
+        DataSet ds = fillData();
+      for(int i=0;i<22; i++){
+         if(ds.getData().get(i).isTaken()==false){
+             highestGain(ds);
+             
+             ds.getData().get(i).setTaken(true);
+          }
+         else {
+                  highestGain(ds);
+         
+         }
+         
+            
+             
+      }
+     
 
     }
 
@@ -72,11 +86,11 @@ public class Main {
             dataSet.getData().get(i).setInformationGain(featureGain);
 
         }
-
+        highestGain(dataSet);
         return dataSet;
     }
 
-    static FeatureNode highestGain() throws IOException {
+    static FeatureNode highestGain(DataSet dataSet) throws IOException {
 
         FeatureNode fn = new FeatureNode();
 
@@ -86,7 +100,7 @@ public class Main {
         String featureName = null;
         List<Double> attributes = new ArrayList<>();
 
-        DataSet dataSet = fillData();
+//        DataSet dataSet = fillData();
 
         int size = dataSet.getData().size();
 
@@ -99,18 +113,17 @@ public class Main {
         Collections.reverse(featuerGainList);
         double highestGain = featuerGainList.get(0);
 
-        for (int i = 0; i <numOfAttributes-1; i++) {
+        for (int i = 0; i < numOfAttributes - 1; i++) {
             if (dataSet.getData().get(i).getInformationGain() == highestGain) {
                 dataSet.getData().get(i).getFeatureAttribute();
                 int featureAttributeSize = DataDAO.read(fileName).attribute(i).numValues();
 
                 for (int j = 0; j < featureAttributeSize; j++) {
                     attributes.add(dataSet.getData().get(i).getFeatureAttribute()[j]);
-                    System.out.println(dataSet.getData().get(i).getFeatureAttribute()[j]);
 
                 }
                 featureName = dataSet.getData().get(i).getName();
-                dataSet.getData().get(i).setTaken(true);
+//                dataSet.getData().get(i).setTaken(true);
 
             }
 
@@ -119,26 +132,28 @@ public class Main {
         fn.setName(featureName);
 //        System.out.println(featureName);
 
+        buildTree(fn);
+
         return fn;
 
     }
 
-    static void buildTree() throws IOException {
+    static void buildTree(FeatureNode gainNode) throws IOException {
 
-        highestGain();
-
+   
         Node node = new Node(null);
         String temp = null;
         Node parentNode = new Node(null);
-        parentNode.setId(highestGain().getName());
-        for (int i = 0; i < highestGain().getAttributes().size(); i++) {
-            temp = "" + highestGain().getAttributes().get(i);
+        parentNode.setId(gainNode.getName());
+        for (int i = 0; i <gainNode.getAttributes().size(); i++) {
+            temp = "" + gainNode.getAttributes().get(i);
 
             node = Node.addChild(parentNode, temp);
 
         }
 
         node.printTree(parentNode, " ");
+
     }
 
 }
